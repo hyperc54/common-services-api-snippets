@@ -2,16 +2,12 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr  5 18:03:48 2017
-
 This snippet gets a specific channel history and print ou some quick 
 analytics from its users.
-
 Some inspiration:
     https://github.com/belgort/python-slack-example/blob/master/slack_demo.py
-
 List of methods to call:
     https://api.slack.com/methods
-
 @author: pierre
 """
 
@@ -19,6 +15,10 @@ List of methods to call:
 CHANNEL_ID = 'G2B1GFDPS'
 
 #%% Imports
+import sys
+import os
+sys.path.append(os.path.abspath("../.."))
+
 from slackclient import SlackClient
 from api_keys import SLACK_API_KEY
 import matplotlib.pyplot as plt
