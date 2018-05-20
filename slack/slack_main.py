@@ -12,6 +12,7 @@ sys.path.append(os.path.abspath(".."))
 from api_keys import SLACK_API_KEY
 
 from load_messages import SlackMessagesLoader
+from simple_analytics import *
 
 from utils import get_range_dates
 
@@ -30,11 +31,13 @@ Loader = SlackMessagesLoader(SLACK_API_KEY)
 df = Loader.get_df_logs(DAYS, CHANNEL_IDS)
 
 #%%
-df_grouped = df.groupby(['real_name', 'd'], as_index=False).count()
+df_grouped = get_simple_messages_count(df, ['real_name', 'd'])
 
 #%%
 sns.set(style="darkgrid")
 
 # Draw a pointplot to show pulse as a function of three categorical factors
-g = sns.factorplot(x="d", y="text", hue="real_name", data=df_grouped,
+g = sns.factorplot(x="d", y="count", hue="real_name", data=df_grouped,
                    capsize=.2, aspect=.75)
+
+#%%

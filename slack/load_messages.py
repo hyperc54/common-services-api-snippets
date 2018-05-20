@@ -57,7 +57,12 @@ class SlackMessagesLoader:
                                                           ts,
                                                           ts + 86400)
         
-        
+    def __get_user_info(self, user_id):
+        """
+        Calls Slack API to get one user_id info
+        """
+        return self.sc.api_call('users.info', user=user_id, pretty=1)
+    
     def __get_df_user_from_uids(self, uid_list):
         """
         Constructs user dataframes from a list of requested UIDs
@@ -67,7 +72,7 @@ class SlackMessagesLoader:
         COLUMNS_TO_KEEP = ['id', 'real_name']
         usernames = []
         for user_id in uid_list:
-            record = self.sc.api_call('users.info', user=user_id, pretty=1)
+            record = self.__get_user_info(user_id)
             try:
                 usernames.append(record['user'])
             except KeyError:
@@ -81,7 +86,7 @@ class SlackMessagesLoader:
         Public method to get logs from a single d and channel_id
         TODO : Build Dataframe in place (there we just copy a dict)
         """
-        COLUMNS_TO_KEEP = ['text', 'ts', 'type', 'user']
+        COLUMNS_TO_KEEP = ['text', 'ts', 'type', 'user', 'reactions']
         
         # Get records
         chat_records = self.__get_chat_history_in_a_day(d, channel_id)
@@ -93,6 +98,7 @@ class SlackMessagesLoader:
             print('It\'s empty there ! [{},{}]'.format(str(d), str(channel_id)))
             return df_log
         
+        COLUMNS_TO_KEEP = [c for c in COLUMNS_TO_KEEP if c in df_log.columns]
         df_log = df_log[COLUMNS_TO_KEEP]
         
         # Add d & channel info
