@@ -111,10 +111,18 @@ class SlackMessagesLoader:
         combinations = product(d_list, channel_id_list)
         return reduce(lambda a,b:a.append(b), [self.__get_df_logs_single(*c) for c in combinations])
     
-    def get_df_logs(self, days, channel_ids):
+    def __get_channel_ids_from_names(self, channel_names):
+        list_chan = self.sc.api_call('channels.list')['channels']
+        list_chan += self.sc.api_call('groups.list')['groups']
+    
+        return [c['id'] for c in list_chan if c['name'] in channel_names]
+    
+    def get_df_logs(self, days, channel_names):
         """
         Gets records structured as pandas dataframe for days from channel_id
         """
+        channel_ids = self.__get_channel_ids_from_names(channel_names)
+        
         df_log = self.__get_df_logs_multiple(days, channel_ids)
         
         # Add real username
@@ -124,3 +132,5 @@ class SlackMessagesLoader:
         df_log = pd.merge(df_log, df_user, how='inner', left_on='user', right_on='id')
         
         return df_log
+    
+    

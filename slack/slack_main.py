@@ -21,14 +21,15 @@ import seaborn as sns
 
 
 #%% Global params
-CHANNEL_IDS = ["G2B1GFDPS", "G2B1GFDPD"]
+#CHANNEL_IDS = ["G2B1GFDPS", "G2B1GFDPD"]
+CHANNEL_NAMES = ["zephir-team-private"]
 DAYS = get_range_dates("20180101", 5)
 
 #%%
 Loader = SlackMessagesLoader(SLACK_API_KEY)
 
 #%%
-df = Loader.get_df_logs(DAYS, CHANNEL_IDS)
+df = Loader.get_df_logs(DAYS, CHANNEL_NAMES)
 
 #%%
 df_grouped = get_simple_messages_count(df, ['real_name', 'd'])
